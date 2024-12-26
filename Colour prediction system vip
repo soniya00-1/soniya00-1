@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Prediction Tool</title>
+    <style>
+        body {
+            margin: 0;
+            background-color: black;
+            font-family: Arial, sans-serif;
+            color: white;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+        .container {
+            z-index: 2;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgb(13, 47, 215);
+            text-align: center;
+            max-width: 400px;
+        }
+        .login {
+            background-color: black;
+            border: 2px solid rgb(100, 233, 11);
+        }
+        .linear2 {
+            background-color: black;
+            padding: 20px;
+            border: 2px solid red;
+        }
+        .glowing-text {
+            color: rgb(13, 214, 174);
+            text-shadow: 0 0 10px rgb(149, 214, 19);
+        }
+        button {
+            background-color: red;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            margin: 10px;
+            box-shadow: 0 0 10px rgb(143, 213, 3);
+        }
+        button:hover {
+            background-color: rgb(23, 151, 210);
+        }
+        input {
+            padding: 10px;
+            margin: 10px;
+            border: 1px solid rgb(8, 64, 196);
+            background-color: black;
+            color: white;
+            box-shadow: 0 0 10px red;
+            font-size: 1rem;
+        }
+        #telegram-link {
+            display: block;
+            margin-top: 15px;
+            color: rgb(26, 193, 14);
+            text-decoration: none;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="particles"></canvas>
+    
+    <!-- Login Page -->
+    <div class="container login" id="login-page">
+        <h2 class="glowing-text">🔐 LOGIN 🔐</h2>
+        <p class="glowing-text">Enter Password to Access</p>
+        <input type="password" id="password" placeholder="Enter Password">
+        <button onclick="login()">Login</button>
+        <p id="login-error" style="color: yellow; display: none;">Incorrect Password!</p>
+    </div>
+    
+    <!-- Prediction Tool -->
+    <div class="container linear2" id="main-app" style="display: none;">
+        <h2 class="glowing-text">🔶 HACKER - WHO 🔶</h2>
+        <p id="textview1" class="glowing-text">Period: Loading...</p>
+        <p id="textview2" class="glowing-text">Timer: 00:00</p>
+        <hr style="border: 1px solid red;">
+        <p class="glowing-text">UPCOMING NUMBER -: <span id="upcoming-number">N/A</span></p>
+        <p class="glowing-text">UPCOMING SIZE -: <span id="upcoming-size">N/A</span></p>
+        <p class="glowing-text">UPCOMING COLOR -: <span id="upcoming-color">N/A</span></p>
+        <hr style="border: 1px solid red;">
+        <p class="glowing-text">WIN CHANCE -: <span id="win-chance">N/A</span></p>
+        <button id="check-btn" onclick="checkResult()">CHECK RESULT</button>
+        <a id="telegram-link" href="#" target="_blank">Join Telegram Channel</a>
+    </div>
+
+    <script>
+        // Particle Animation
+        const canvas = document.getElementById('particles');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        const particles = [];
+        const colors = ['#f44336', '#E57373'];
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.radius = Math.random() * 7 + 3;
+                this.color = colors[Math.floor(Math.random() * colors.length)];
+                this.dx = Math.random() * 2 - 1;
+                this.dy = Math.random() * 2 - 1;
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+            }
+            update() {
+                this.x += this.dx;
+                this.y += this.dy;
+                if (this.x < 0 || this.x > canvas.width) this.dx *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.dy *= -1;
+                this.draw();
+            }
+        }
+        function initParticles() {
+            for (let i = 0; i < 30; i++) particles.push(new Particle());
+        }
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach((particle) => particle.update());
+            requestAnimationFrame(animateParticles);
+        }
+        initParticles();
+        animateParticles();
+
+        // Login Functionality
+        function login() {
+            const password = document.getElementById('password').value;
+            if (password === '1234') {
+                document.getElementById('login-page').style.display = 'none';
+                document.getElementById('main-app').style.display = 'block';
+            } else {
+                document.getElementById('login-error').style.display = 'block';
+            }
+        }
+
+        // Timer and Period Logic
+        let previousPeriod = null;
+        function updateTimerAndPeriod() {
+            const now = new Date();
+            const seconds = now.getSeconds();
+            const remainingSeconds = 60 - seconds;
+            const elapsedMinutes = (now.getHours() * 60 + now.getMinutes()) - (5 * 60 + 29);
+            const period = `100001${String(elapsedMinutes < 0 ? 0 : elapsedMinutes).padStart(4, '0')}`;
+            document.getElementById('textview1').innerText = `Period: ${period}`;
+            document.getElementById('textview2').innerText = `Timer: 00:${String(remainingSeconds).padStart(2, '0')}`;
+            if (previousPeriod !== period) {
+                previousPeriod = period;
+                predict(); // Generate new results on period change
+            }
+        }
+        setInterval(updateTimerAndPeriod, 1000);
+
+        // Prediction Logic
+        function predict() {
+            const number = Math.floor(Math.random() * 10);
+            const size = number <= 4 ? 'SMALL' : 'BIG';
+            const color = number % 2 === 0 ? 'RED 🔴' : 'GREEN 🟢';
+            const winChance = Math.floor(Math.random() * 100) + '%';
+            document.getElementById('upcoming-number').innerText = number;
+            document.getElementById('upcoming-size').innerText = size;
+            document.getElementById('upcoming-color').innerText = color;
+            document.getElementById('win-chance').innerText = winChance;
+        }
+    </script>
+</body>
+</html>
